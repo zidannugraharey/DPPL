@@ -4,6 +4,8 @@
  */
 package com.example;
 
+import java.util.List;
+
 /**
  *
  * @author Nahda
@@ -61,6 +63,14 @@ public class MainJFrame extends javax.swing.JFrame {
      */
     public void showFormPengisianPanel(MataKuliah mk, com.example.PilihKuisionerPanel parentPanel) {
         FormPengisianPanel panel = new FormPengisianPanel(mk, parentPanel);
+        changePanel(panel);
+    }
+
+    /**
+     * Method untuk menampilkan halaman generate laporan
+     */
+    public void showGenerateReportPanel(List<MataKuliah> daftarMataKuliah) {
+        GenerateReportPanel panel = new GenerateReportPanel(daftarMataKuliah);
         changePanel(panel);
     }
 

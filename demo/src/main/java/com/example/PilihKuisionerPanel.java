@@ -1,12 +1,8 @@
+package com.example;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
-package com.example;
-
-/**
- *
- * @author Nahda
  */
 
 import java.awt.Color;
@@ -28,13 +24,15 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
      */
     // List untuk menyimpan data mata kuliah
     private List<MataKuliah> daftarMataKuliah;
-    
+    private JButton finishButton; // Finish button that becomes enabled when all courses filled
+
     public PilihKuisionerPanel() {
         System.out.println("[PilihKuisionerPanel] Constructor start");
         try {
             initComponents();
             initializeData();
             setupTable();
+            updateFinishButtonState();
             System.out.println("[PilihKuisionerPanel] Constructor complete");
         } catch (Throwable t) {
             System.err.println("[PilihKuisionerPanel] Error during construction:");
@@ -52,7 +50,7 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
     //Initialize data mata kuliah
     private void initializeData() {
         daftarMataKuliah = new ArrayList<>();
-        
+
         // Tambahkan data mata kuliah (status awal: belum diisi)
         daftarMataKuliah.add(new MataKuliah(1, "Aljabar Linier dan Matriks", "Selasa, 08:00-10:30, C.314", false));
         daftarMataKuliah.add(new MataKuliah(2, "Basis Data", "Senin, 13:00-15:30, C.304", false));
@@ -60,7 +58,7 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         daftarMataKuliah.add(new MataKuliah(4, "Teori Bahasa dan Automata", "Jumat, 08:00-10:30, C.314", false));
     }
 
-    
+
     /**
      * Setup table dengan data dan custom renderer
      */
@@ -104,13 +102,13 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         tableKuisioner.getColumnModel().getColumn(3).setCellEditor(new StatusButtonEditor());
     }
 
-    
+
     //Load data ke table
-    
+
     private void loadTableData() {
         DefaultTableModel model = (DefaultTableModel) tableKuisioner.getModel();
         model.setRowCount(0); // Clear existing data
-        
+
         for (MataKuliah mk : daftarMataKuliah) {
             model.addRow(new Object[]{
                 mk.getNo(),
@@ -119,46 +117,67 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
                 mk.getStatusText()
             });
         }
+
+        // Update finish button state after loading
+        updateFinishButtonState();
     }
-    
+
     //Refresh table setelah update status
     public void refreshTable() {
         loadTableData();
         tableKuisioner.repaint();
+        updateFinishButtonState();
     }
-    
+
+    // Update enable/disable state of finishButton based on whether all courses are filled
+    private void updateFinishButtonState() {
+        if (finishButton == null) return;
+        if (daftarMataKuliah == null || daftarMataKuliah.isEmpty()) {
+            finishButton.setEnabled(false);
+            return;
+        }
+        boolean allFilled = true;
+        for (MataKuliah mk : daftarMataKuliah) {
+            if (!mk.isSudahDiisi()) {
+                allFilled = false;
+                break;
+            }
+        }
+        finishButton.setEnabled(allFilled);
+    }
+
     //Custom renderer untuk menampilkan button dengan warna berbeda
     class StatusButtonRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
-            
+
             String status = value != null ? value.toString() : "Belum diisi";
             JButton button = new JButton(status);
-            
+
             // Warna berbeda berdasarkan status
             if (status.equals("Sudah diisi")) {
                 button.setBackground(new Color(76, 175, 80)); // Hijau
             } else {
                 button.setBackground(new Color(244, 67, 54)); // Merah
             }
-            
+
             button.setForeground(Color.WHITE);
             button.setFont(new Font("Segoe UI", Font.BOLD, 12));
             button.setFocusPainted(false);
             button.setBorderPainted(false);
             button.setOpaque(true);
-            
+
             return button;
         }
     }
-    
+
     //Hanya editor untuk handle button click
     class StatusButtonEditor extends javax.swing.DefaultCellEditor {
         private JButton button;
         private String label;
         private int currentRow;
-        
+
         public StatusButtonEditor() {
             super(new javax.swing.JCheckBox());
             button = new JButton();
@@ -166,18 +185,18 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
             button.setFont(new Font("Segoe UI", Font.BOLD, 12));
             button.setFocusPainted(false);
             button.setBorderPainted(false);
-            
+
             button.addActionListener(e -> fireEditingStopped());
         }
-        
+
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value,
             boolean isSelected, int row, int column) {
-            
+
             currentRow = row;
             label = value != null ? value.toString() : "Belum diisi";
             button.setText(label);
-            
+
             // Set warna sesuai status
             if (label.equals("Sudah diisi")) {
                 button.setBackground(new Color(76, 175, 80)); // Hijau
@@ -185,10 +204,10 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
                 button.setBackground(new Color(244, 67, 54)); // Merah
             }
             button.setForeground(Color.WHITE);
-            
+
             return button;
         }
-        
+
         @Override
         public Object getCellEditorValue() {
             // Handle button click
@@ -199,7 +218,7 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         //Handle ketika button diklik
         private void handleButtonClick(int row) {
             MataKuliah mk = daftarMataKuliah.get(row);
-            
+
             if (mk.isSudahDiisi()) {
                 // Jika sudah diisi, tampilkan info
                 javax.swing.JOptionPane.showMessageDialog(PilihKuisionerPanel.this,
@@ -209,13 +228,11 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
                     javax.swing.JOptionPane.INFORMATION_MESSAGE);
             } else {
                 // Jika belum diisi, buka form penilaian
-                // TODO: Buat dan buka FormPengisianPanel
-                
                 openFormPengisian(mk);
             }
         }
     }
-    
+
     private void openFormPengisian(MataKuliah mk) {
         MainJFrame mainFrame = (MainJFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
         if (mainFrame != null) {
@@ -223,8 +240,7 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         }
     }
 
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -289,7 +305,7 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         // Title area inside card
         javax.swing.JPanel titleArea = new javax.swing.JPanel();
         titleArea.setOpaque(false);
-        titleArea.setLayout(new javax.swing.BoxLayout(titleArea, javax.swing.BoxLayout.Y_AXIS));
+        titleArea.setLayout(new java.awt.BoxLayout(titleArea, javax.swing.BoxLayout.Y_AXIS));
         jLabel2.setFont(new java.awt.Font("Georgia", java.awt.Font.PLAIN, 14));
         jLabel2.setText("SELAMAT DATANG DI");
         jLabel2.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
@@ -311,13 +327,31 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         mainArea.add(card);
         this.add(mainArea, java.awt.BorderLayout.CENTER);
 
-        // sticky footer help label
+        // sticky footer help label + finish button
         javax.swing.JPanel footer = new javax.swing.JPanel();
         footer.setOpaque(false);
+        footer.setLayout(new java.awt.BorderLayout());
         javax.swing.JLabel help = new javax.swing.JLabel("Klik tombol Status untuk mengisi kuisioner atau melihat hasil.");
         help.setFont(new java.awt.Font("Georgia", 0, 12));
-        footer.add(help);
+        footer.add(help, java.awt.BorderLayout.WEST);
         footer.setBorder(new javax.swing.border.EmptyBorder(8, 12, 12, 12));
+
+        finishButton = new JButton("Finish");
+        finishButton.setFont(new Font("Georgia", Font.BOLD, 12));
+        finishButton.setEnabled(false);
+        finishButton.addActionListener(e -> {
+            MainJFrame mainFrame = (MainJFrame) javax.swing.SwingUtilities.getWindowAncestor(PilihKuisionerPanel.this);
+            if (mainFrame != null) {
+                mainFrame.showGenerateReportPanel(daftarMataKuliah);
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(PilihKuisionerPanel.this,
+                    "Tidak dapat membuka laporan (jendela utama tidak ditemukan).",
+                    "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        footer.add(finishButton, java.awt.BorderLayout.EAST);
         this.add(footer, java.awt.BorderLayout.SOUTH);
 
     }// </editor-fold>//GEN-END:initComponents
