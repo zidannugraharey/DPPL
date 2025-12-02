@@ -14,8 +14,10 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+
 
 public class PilihKuisionerPanel extends javax.swing.JPanel {
 
@@ -74,14 +76,25 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         };
         tableKuisioner.setModel(model);
 
-        // Styling header
+        // Styling header - WARNA TEKS HITAM
         tableKuisioner.getTableHeader().setBackground(new Color(70, 130, 180));
-        tableKuisioner.getTableHeader().setForeground(Color.WHITE);
+        tableKuisioner.getTableHeader().setForeground(Color.BLACK);
         tableKuisioner.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         tableKuisioner.getTableHeader().setReorderingAllowed(false);
+        
+        // GARIS HEADER LEBIH TEBAL
+        tableKuisioner.getTableHeader().setBorder(new LineBorder(new Color(50, 100, 150), 2));
 
         // Set row height
         tableKuisioner.setRowHeight(45);
+        
+        // GARIS SEL LEBIH JELAS
+        tableKuisioner.setShowGrid(true);
+        tableKuisioner.setGridColor(new Color(200, 200, 200)); // Abu-abu terang
+        tableKuisioner.setIntercellSpacing(new java.awt.Dimension(1, 1));
+        
+        // BORDER UNTUK SELURUH TABLE
+        tableKuisioner.setBorder(new LineBorder(new Color(150, 150, 150), 1));
 
         // Populate table
         loadTableData();
@@ -92,13 +105,69 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         tableKuisioner.getColumnModel().getColumn(2).setPreferredWidth(250);
         tableKuisioner.getColumnModel().getColumn(3).setPreferredWidth(150);
 
-        // Center align untuk kolom No
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        // Center align untuk kolom No dengan garis
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setHorizontalAlignment(SwingConstants.CENTER);
+                
+                // GARIS VERTIKAL DAN HORIZONTAL
+                setBorder(new LineBorder(new Color(200, 200, 200), 1));
+                
+                // Warna background untuk baris genap/ganjil
+                if (row % 2 == 0) {
+                    c.setBackground(new Color(245, 245, 245)); // Abu-abu sangat terang
+                } else {
+                    c.setBackground(Color.WHITE);
+                }
+                
+                // Warna background saat dipilih
+                if (isSelected) {
+                    c.setBackground(new Color(220, 240, 255)); // Biru muda
+                }
+                
+                return c;
+            }
+        };
         tableKuisioner.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        
+        // Renderer untuk kolom lainnya dengan garis
+        DefaultTableCellRenderer defaultRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setHorizontalAlignment(SwingConstants.LEFT);
+                
+                // GARIS VERTIKAL DAN HORIZONTAL
+                setBorder(new LineBorder(new Color(200, 200, 200), 1));
+                
+                // Warna background untuk baris genap/ganjil
+                if (row % 2 == 0) {
+                    c.setBackground(new Color(245, 245, 245)); // Abu-abu sangat terang
+                } else {
+                    c.setBackground(Color.WHITE);
+                }
+                
+                // Warna background saat dipilih
+                if (isSelected) {
+                    c.setBackground(new Color(220, 240, 255)); // Biru muda
+                }
+                
+                return c;
+            }
+        };
+        
+        // Terapkan renderer ke kolom 1 dan 2
+        tableKuisioner.getColumnModel().getColumn(1).setCellRenderer(defaultRenderer);
+        tableKuisioner.getColumnModel().getColumn(2).setCellRenderer(defaultRenderer);
 
-        // Custom renderer dan editor untuk kolom Status
-        tableKuisioner.getColumnModel().getColumn(3).setCellRenderer(new StatusButtonRenderer());
+        // SIMPLE STATUS RENDERER - PASTI BERFUNGSI
+        tableKuisioner.getColumnModel().getColumn(3).setCellRenderer(new SimpleStatusRenderer());
         tableKuisioner.getColumnModel().getColumn(3).setCellEditor(new StatusButtonEditor());
     }
 
@@ -146,33 +215,52 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         finishButton.setEnabled(allFilled);
     }
 
-    //Custom renderer untuk menampilkan button dengan warna berbeda
-    class StatusButtonRenderer extends DefaultTableCellRenderer {
+    // SIMPLE STATUS RENDERER - MENGGUNAKAN JLABEL DENGAN STYLING SEPERTI BUTTON
+    class SimpleStatusRenderer extends DefaultTableCellRenderer {
+        
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
-
+            
+            // Panggil parent class terlebih dahulu
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            
             String status = value != null ? value.toString() : "Belum diisi";
-            JButton button = new JButton(status);
-
-            // Warna berbeda berdasarkan status
+            
+            // Set text
+            setText(status);
+            setHorizontalAlignment(SwingConstants.CENTER);
+            setFont(new Font("Segoe UI", Font.BOLD, 12));
+            
+            // GARIS BORDER UNTUK SEL
+            setBorder(new LineBorder(new Color(150, 150, 150), 1));
+            
+            // WARNA BERDASARKAN STATUS - PASTIKAN OPAQUE TRUE
+            setOpaque(true);
+            
             if (status.equals("Sudah diisi")) {
-                button.setBackground(new Color(76, 175, 80)); // Hijau
+                setBackground(new Color(76, 175, 80)); // Hijau
+                setForeground(Color.WHITE);
             } else {
-                button.setBackground(new Color(244, 67, 54)); // Merah
+                setBackground(new Color(244, 67, 54)); // Merah TERANG
+                setForeground(Color.WHITE);
             }
-
-            button.setForeground(Color.WHITE);
-            button.setFont(new Font("Segoe UI", Font.BOLD, 12));
-            button.setFocusPainted(false);
-            button.setBorderPainted(false);
-            button.setOpaque(true);
-
-            return button;
+            
+            // Debug: print status dan warna
+            System.out.println("SimpleRenderer - Row: " + row + ", Status: " + status + 
+                            ", BgColor: " + getBackground() + ", FgColor: " + getForeground());
+            
+            // Override background jika baris dipilih
+            if (isSelected) {
+                setBackground(new Color(100, 180, 255)); // Biru lebih terang
+                setForeground(Color.BLACK);
+            }
+            
+            return c;
         }
     }
 
-    //Hanya editor untuk handle button click
+    //Hanya editor untuk handle button click DENGAN GARIS
     class StatusButtonEditor extends javax.swing.DefaultCellEditor {
         private JButton button;
         private String label;
@@ -184,7 +272,9 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
             button.setOpaque(true);
             button.setFont(new Font("Segoe UI", Font.BOLD, 12));
             button.setFocusPainted(false);
-            button.setBorderPainted(false);
+            button.setBorderPainted(true); // Biarkan border terlihat
+            button.setBorder(new LineBorder(new Color(100, 100, 100), 1));
+            button.setMargin(new java.awt.Insets(5, 10, 5, 10));
 
             button.addActionListener(e -> fireEditingStopped());
         }
@@ -196,6 +286,9 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
             currentRow = row;
             label = value != null ? value.toString() : "Belum diisi";
             button.setText(label);
+            
+            // Debug: print status editor
+            System.out.println("Editor - Row: " + row + ", Status: " + label);
 
             // Set warna sesuai status
             if (label.equals("Sudah diisi")) {
@@ -261,7 +354,8 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         // --- HEADER (top) ---
         javax.swing.JPanel headerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
         headerPanel.setBackground(java.awt.Color.decode("#334EAC"));
-        headerPanel.setPreferredSize(new java.awt.Dimension(10, 72));
+        headerPanel.setPreferredSize(new java.awt.Dimension(10, 80));
+        
         javax.swing.JLabel headerTitle = new javax.swing.JLabel("KUISIONER PENILAIAN KINERJA DOSEN");
         headerTitle.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 22));
         headerTitle.setForeground(java.awt.Color.white);
@@ -279,10 +373,10 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
 
         this.add(headerPanel, java.awt.BorderLayout.NORTH);
 
-        // --- MAIN (center) ---
-        javax.swing.JPanel mainArea = new javax.swing.JPanel();
+        // --- MAIN CONTENT CENTER ---
+        javax.swing.JPanel mainArea = new javax.swing.JPanel(new java.awt.BorderLayout());
         mainArea.setOpaque(false);
-        mainArea.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 28));
+        mainArea.setBorder(new javax.swing.border.EmptyBorder(40, 60, 40, 60));
 
         // White rounded card
         javax.swing.JPanel card = new javax.swing.JPanel() {
@@ -291,7 +385,8 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
                 super.paintComponent(g);
                 int arc = 20;
                 java.awt.Graphics2D g2 = (java.awt.Graphics2D) g.create();
-                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, 
+                                java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setColor(java.awt.Color.white);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), arc, arc);
                 g2.dispose();
@@ -300,44 +395,48 @@ public class PilihKuisionerPanel extends javax.swing.JPanel {
         card.setOpaque(false);
         card.setLayout(new java.awt.BorderLayout());
         card.setBorder(new javax.swing.border.EmptyBorder(32, 36, 32, 36));
-        card.setPreferredSize(new java.awt.Dimension(900, 580));
 
         // Title area inside card
         javax.swing.JPanel titleArea = new javax.swing.JPanel();
         titleArea.setOpaque(false);
-        titleArea.setLayout(new java.awt.BoxLayout(titleArea, javax.swing.BoxLayout.Y_AXIS));
+        titleArea.setLayout(new javax.swing.BoxLayout(titleArea, javax.swing.BoxLayout.Y_AXIS));
+        
         jLabel2.setFont(new java.awt.Font("Georgia", java.awt.Font.PLAIN, 14));
         jLabel2.setText("SELAMAT DATANG DI");
         jLabel2.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        
         jLabel1.setFont(new java.awt.Font("Georgia", java.awt.Font.BOLD, 22));
         jLabel1.setText("DAFTAR MATA KULIAH");
         jLabel1.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        
         titleArea.add(jLabel2);
         titleArea.add(javax.swing.Box.createVerticalStrut(6));
         titleArea.add(jLabel1);
-        titleArea.add(javax.swing.Box.createVerticalStrut(12));
+        titleArea.add(javax.swing.Box.createVerticalStrut(24));
         card.add(titleArea, java.awt.BorderLayout.NORTH);
 
         // Table (scroll) occupies card center and expands to fullscreen inside card
         jScrollPane1.setViewportView(tableKuisioner);
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(820, 380));
+        
+        // GARIS BORDER UNTUK SCROLLPANE
+        jScrollPane1.setBorder(new LineBorder(new Color(150, 150, 150), 1));
         card.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        mainArea.add(card);
+        mainArea.add(card, java.awt.BorderLayout.CENTER);
         this.add(mainArea, java.awt.BorderLayout.CENTER);
 
         // sticky footer help label + finish button
-        javax.swing.JPanel footer = new javax.swing.JPanel();
+        javax.swing.JPanel footer = new javax.swing.JPanel(new java.awt.BorderLayout());
         footer.setOpaque(false);
-        footer.setLayout(new java.awt.BorderLayout());
+        footer.setBorder(new javax.swing.border.EmptyBorder(12, 20, 20, 20));
+        
         javax.swing.JLabel help = new javax.swing.JLabel("Klik tombol Status untuk mengisi kuisioner atau melihat hasil.");
         help.setFont(new java.awt.Font("Georgia", 0, 12));
         footer.add(help, java.awt.BorderLayout.WEST);
-        footer.setBorder(new javax.swing.border.EmptyBorder(8, 12, 12, 12));
 
         finishButton = new JButton("Finish");
         finishButton.setFont(new Font("Georgia", Font.BOLD, 12));
+        finishButton.setPreferredSize(new java.awt.Dimension(100, 35));
         finishButton.setEnabled(false);
         finishButton.addActionListener(e -> {
             MainJFrame mainFrame = (MainJFrame) javax.swing.SwingUtilities.getWindowAncestor(PilihKuisionerPanel.this);

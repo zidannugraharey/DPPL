@@ -4,19 +4,10 @@
  */
 package com.example;
 
-/**
- *
- * @author Nahda
- */
-
 import javax.swing.JOptionPane;
-
 
 public class FormPengisianPanel extends javax.swing.JPanel {
 
-    /**
-     * Creates new form FormPengisianPanel
-     */
     private MataKuliah mataKuliah;
     private PilihKuisionerPanel parentPanel;
     private java.awt.Image backgroundImage;
@@ -49,34 +40,36 @@ public class FormPengisianPanel extends javax.swing.JPanel {
     }
     
     private void setupContent() {
-        // Create main content panel with all components
-        mainContentPanel = new javax.swing.JPanel();
-        mainContentPanel.setLayout(new javax.swing.BoxLayout(mainContentPanel, javax.swing.BoxLayout.Y_AXIS));
-        mainContentPanel.setOpaque(false);
-        
-        // Build the complete content
-        buildContent();
-        
-        // Create main scroll pane
-        mainScrollPane = new javax.swing.JScrollPane();
-        mainScrollPane.setViewportView(mainContentPanel);
-        mainScrollPane.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-        mainScrollPane.setOpaque(false);
-        mainScrollPane.getViewport().setOpaque(false);
-        mainScrollPane.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        mainScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        
-        // Set layout and add components
+        // Set layout utama
         this.setLayout(new java.awt.BorderLayout());
         
         // Add header
         javax.swing.JPanel headerPanel = createHeaderPanel();
         this.add(headerPanel, java.awt.BorderLayout.NORTH);
         
-        // Add main scroll pane in center
-        this.add(mainScrollPane, java.awt.BorderLayout.CENTER);
+        // Main content dengan scroll
+        mainContentPanel = new javax.swing.JPanel();
+        mainContentPanel.setLayout(new javax.swing.BoxLayout(mainContentPanel, javax.swing.BoxLayout.Y_AXIS));
+        mainContentPanel.setOpaque(false);
         
-        // Add submit button at bottom
+        // Build content
+        buildContent();
+        
+        mainScrollPane = new javax.swing.JScrollPane(mainContentPanel);
+        mainScrollPane.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+        mainScrollPane.setOpaque(false);
+        mainScrollPane.getViewport().setOpaque(false);
+        mainScrollPane.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        mainScrollPane.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        // Center panel untuk mengatur posisi card
+        javax.swing.JPanel centerWrapper = new javax.swing.JPanel(new java.awt.BorderLayout());
+        centerWrapper.setOpaque(false);
+        centerWrapper.setBorder(new javax.swing.border.EmptyBorder(20, 40, 20, 40));
+        centerWrapper.add(mainScrollPane, java.awt.BorderLayout.CENTER);
+        this.add(centerWrapper, java.awt.BorderLayout.CENTER);
+        
+        // Add submit button
         javax.swing.JPanel submitPanel = createSubmitPanel();
         this.add(submitPanel, java.awt.BorderLayout.SOUTH);
     }
@@ -84,7 +77,7 @@ public class FormPengisianPanel extends javax.swing.JPanel {
     private javax.swing.JPanel createHeaderPanel() {
         javax.swing.JPanel headerPanel = new javax.swing.JPanel();
         headerPanel.setLayout(new java.awt.BorderLayout());
-        headerPanel.setPreferredSize(new java.awt.Dimension(10, 72));
+        headerPanel.setPreferredSize(new java.awt.Dimension(10, 80));
         headerPanel.setBackground(java.awt.Color.decode("#334EAC"));
 
         javax.swing.JLabel headerTitle = new javax.swing.JLabel();
@@ -135,7 +128,7 @@ public class FormPengisianPanel extends javax.swing.JPanel {
         btnSubmit.setFont(new java.awt.Font("Georgia", 1, 14));
         javax.swing.JPanel submitPanel = new javax.swing.JPanel();
         submitPanel.setOpaque(false);
-        submitPanel.setBorder(new javax.swing.border.EmptyBorder(12, 0, 12, 0));
+        submitPanel.setBorder(new javax.swing.border.EmptyBorder(20, 0, 20, 0));
         submitPanel.add(btnSubmit);
         return submitPanel;
     }
@@ -173,7 +166,12 @@ public class FormPengisianPanel extends javax.swing.JPanel {
         cardPanel.setOpaque(false);
         cardPanel.setLayout(new javax.swing.BoxLayout(cardPanel, javax.swing.BoxLayout.Y_AXIS));
         cardPanel.setBorder(new javax.swing.border.EmptyBorder(32, 32, 32, 32));
-        cardPanel.setMaximumSize(new java.awt.Dimension(800, java.lang.Integer.MAX_VALUE));
+        
+        // Set maximum width tapi tetap responsive
+        cardPanel.setMaximumSize(new java.awt.Dimension(
+            java.lang.Integer.MAX_VALUE, 
+            java.lang.Integer.MAX_VALUE
+        ));
         
         // Add title section
         addTitleSection(cardPanel);
@@ -222,18 +220,22 @@ public class FormPengisianPanel extends javax.swing.JPanel {
         instructionsScroll.setBorder(javax.swing.BorderFactory.createEmptyBorder());
         instructionsScroll.setOpaque(false);
         instructionsScroll.getViewport().setOpaque(false);
-        instructionsScroll.setPreferredSize(new java.awt.Dimension(700, 120));
-        instructionsScroll.setMaximumSize(new java.awt.Dimension(700, 120));
+        instructionsScroll.setMaximumSize(new java.awt.Dimension(
+            java.lang.Integer.MAX_VALUE, 
+            120
+        ));
         
         cardPanel.add(instructionsScroll);
         cardPanel.add(javax.swing.Box.createVerticalStrut(24));
     }
     
     private void addCourseInfoSection(javax.swing.JPanel cardPanel) {
-        javax.swing.JPanel infoRow = new javax.swing.JPanel(new java.awt.GridLayout(2, 2, 12, 6));
+        javax.swing.JPanel infoRow = new javax.swing.JPanel(new java.awt.BorderLayout());
         infoRow.setOpaque(false);
         infoRow.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        infoRow.setMaximumSize(new java.awt.Dimension(700, 50));
+        
+        javax.swing.JPanel infoGrid = new javax.swing.JPanel(new java.awt.GridLayout(2, 2, 12, 6));
+        infoGrid.setOpaque(false);
         
         javax.swing.JLabel jLabel4 = new javax.swing.JLabel();
         jLabel4.setFont(new java.awt.Font("Georgia", 1, 12));
@@ -247,12 +249,14 @@ public class FormPengisianPanel extends javax.swing.JPanel {
         LabelMataKuliah.setText(" ");
         
         LabelNamaDosen.setFont(new java.awt.Font("Georgia", 1, 12));
+        LabelNamaDosen.setText(" ");
         
-        infoRow.add(jLabel4);
-        infoRow.add(LabelMataKuliah);
-        infoRow.add(jLabel7);
-        infoRow.add(LabelNamaDosen);
+        infoGrid.add(jLabel4);
+        infoGrid.add(LabelMataKuliah);
+        infoGrid.add(jLabel7);
+        infoGrid.add(LabelNamaDosen);
         
+        infoRow.add(infoGrid, java.awt.BorderLayout.CENTER);
         cardPanel.add(infoRow);
         cardPanel.add(javax.swing.Box.createVerticalStrut(24));
     }
@@ -275,19 +279,26 @@ public class FormPengisianPanel extends javax.swing.JPanel {
             panelBagian.setBorder(javax.swing.BorderFactory.createTitledBorder(bagian[b]));
             panelBagian.setLayout(new javax.swing.BoxLayout(panelBagian, javax.swing.BoxLayout.Y_AXIS));
             panelBagian.setOpaque(false);
-            panelBagian.setMaximumSize(new java.awt.Dimension(700, java.lang.Integer.MAX_VALUE));
+            
+            // Set agar panel bagian bisa melebar sesuai parent
+            panelBagian.setMaximumSize(new java.awt.Dimension(
+                java.lang.Integer.MAX_VALUE, 
+                java.lang.Integer.MAX_VALUE
+            ));
 
             // Each bagian contains up to 5 questions
             for (int i = 0; i < 5 && qIndex < QUESTIONS.length; i++) {
                 javax.swing.JPanel qRow = new javax.swing.JPanel();
-                qRow.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                qRow.setLayout(new java.awt.BorderLayout()); // Ganti ke BorderLayout
                 qRow.setOpaque(false);
-                qRow.setMaximumSize(new java.awt.Dimension(700, 40));
                 
                 javax.swing.JLabel qLabel = new javax.swing.JLabel(QUESTIONS[qIndex]);
                 qLabel.setFont(new java.awt.Font("Georgia", 0, 12));
-                qRow.add(qLabel);
-
+                qLabel.setBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 10));
+                
+                javax.swing.JPanel radioPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+                radioPanel.setOpaque(false);
+                
                 javax.swing.ButtonGroup bg = new javax.swing.ButtonGroup();
                 questionGroups[qIndex] = bg;
                 for (int v = 1; v <= 5; v++) {
@@ -295,11 +306,13 @@ public class FormPengisianPanel extends javax.swing.JPanel {
                     rb.setActionCommand(String.valueOf(v));
                     rb.setFont(new java.awt.Font("Georgia", 0, 11));
                     bg.add(rb);
-                    qRow.add(rb);
+                    radioPanel.add(rb);
                 }
-
+                
+                qRow.add(qLabel, java.awt.BorderLayout.CENTER);
+                qRow.add(radioPanel, java.awt.BorderLayout.EAST);
                 panelBagian.add(qRow);
-                panelBagian.add(javax.swing.Box.createVerticalStrut(5));
+                panelBagian.add(javax.swing.Box.createVerticalStrut(8));
                 qIndex++;
             }
 

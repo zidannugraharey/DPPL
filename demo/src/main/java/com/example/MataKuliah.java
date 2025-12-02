@@ -9,7 +9,7 @@ package com.example;
  * @author Nahda
  */
 public class MataKuliah {
-     private int no;
+    private int no;
     private String namaMataKuliah;
     private String jadwal;
     private boolean sudahDiisi;

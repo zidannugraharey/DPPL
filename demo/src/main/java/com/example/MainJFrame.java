@@ -6,6 +6,8 @@ package com.example;
 
 import java.util.List;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author Nahda
@@ -17,9 +19,11 @@ public class MainJFrame extends javax.swing.JFrame {
      */
     public MainJFrame() {
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Fullscreen
+        
         System.out.println("[MainJFrame] Constructor: initComponents complete — showing PilihKuisionerPanel");
         try {
-        showPilihKuisionerPanel();
+            showPilihKuisionerPanel();
         } catch (Throwable t) {
             // Defensive: show full stack trace so caller (login) can display meaningful info
             System.err.println("[MainJFrame] Error while initializing main frame:");
@@ -49,8 +53,8 @@ public class MainJFrame extends javax.swing.JFrame {
      */
     public void showPilihKuisionerPanel() {
         try {
-        com.example.PilihKuisionerPanel panel = new com.example.PilihKuisionerPanel();
-        changePanel(panel);
+            com.example.PilihKuisionerPanel panel = new com.example.PilihKuisionerPanel();
+            changePanel(panel);
         } catch (Throwable t) {
             System.err.println("[MainJFrame] Error while creating PilihKuisionerPanel:");
             t.printStackTrace();
@@ -90,18 +94,7 @@ public class MainJFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1366, 768));
 
-        PilihKuisionerPanel.setPreferredSize(new java.awt.Dimension(849, 542));
-
-        javax.swing.GroupLayout PilihKuisionerPanelLayout = new javax.swing.GroupLayout(PilihKuisionerPanel);
-        PilihKuisionerPanel.setLayout(PilihKuisionerPanelLayout);
-        PilihKuisionerPanelLayout.setHorizontalGroup(
-            PilihKuisionerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 830, Short.MAX_VALUE)
-        );
-        PilihKuisionerPanelLayout.setVerticalGroup(
-            PilihKuisionerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 676, Short.MAX_VALUE)
-        );
+        PilihKuisionerPanel.setLayout(new java.awt.BorderLayout());
 
         jLabel1.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
         jLabel1.setText("Sistem Penilaian Kinerja Dosen");
@@ -111,14 +104,13 @@ public class MainJFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(61, 61, 61)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 433, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addComponent(PilihKuisionerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addGap(61, 61, 61)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 433, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(872, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(PilihKuisionerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
